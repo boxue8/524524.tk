@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width initial-scale=1'>
+    <title>2-1</title>
+    <style type="text/css">
+        code{
+            font-size: 17px;
+        }
+        a{
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+<a href="index.html">返回</a>
+    <p><strong>实训任务2-1：实现Vlan间通信(1)</strong></p>
+    <p>PC1（192.168.2.1）和PC3（192.168.2.3）在VLAN1，PC2（192.168.2.2）在VLAN2。要求PC1不能与PC2互相通信，PC1能与PC3通信。</p>
+    <p> <img src="2-1.jpg" referrerpolicy="no-referrer" alt="2-1"></p>
+    <p>1．配置两台交换机的主机名分别为benbu和fenxiao。</p>
+    <p><strong>交换机（benbu）</strong></p>
+    <pre><code>Switch&gt; enable
+Switch# configure terminal
+Switch(config)# hostname benbu
+</code></pre>
+    <p><strong>交换机（fenxiao）</strong></p>
+    <pre><code>Switch&gt; enable
+Switch# configure terminal
+Switch(config)# hostname fenxiao
+</code></pre>
+    <p>2． 创建VTP管理域cqddvtpdomain，并将交换机benbu设置为VTP服务器，将交换机fenxiao设置为VTP Client工作模式。</p>
+    <p><strong>交换机（benbu）</strong></p>
+    <pre><code>benbu# vlan database
+benbu(vlan)# vtp domain cqddvtpdomain
+benbu(vlan)# vtp server
+</code></pre>
+    <p><strong>交换机（fenxiao）</strong></p>
+    <pre><code>fenxiao# vlan database 
+fenxiao(vlan)# vtp domain cqddvtpdomain
+fenxiao(vlan)# vtp client
+</code></pre>
+    <p>3． 在名为benbu的交换机上创建id号为2．3．4的3个VLAN，VLAN的名称分别为student、teacher和office。</p>
+    <p><strong>交换机（benbu）</strong></p>
+    <pre><code>benbu(config)# vlan 2
+benbu(config-vlan)# name student
+benbu(config)# vlan 3
+benbu(config-vlan)# name teacher
+benbu(config)# vlan 4
+benbu(config-vlan)# name office
+</code></pre>
+    <p>4．查看fenxiao交换机上的VLAN信息。</p>
+    <p><strong>交换机（fenxiao）</strong></p>
+    <pre><code>fenxiao# show vlan
+</code></pre>
+    <p>5．将benbu交换机的2～6号端口和fenxiao交换机的2～4号端口划入VLAN2，将benbu交换机的7～9号端口和fenxiao交换机的5～9号端口划入VLAN3，将benbu交换机的10～12号端口和fenxiao交换机的10～12号端口划入VLAN4。
+    </p>
+    <p><strong>交换机（benbu）</strong></p>
+    <pre><code>benbu(config)# interface range f0/2–6
+benbu(config-if-range)# switchport mode access
+benbu(config-if-range)# switchport access vlan 2
+benbu(config)# interface range f0/7-9
+benbu(config-if-range)# switchport mode access
+benbu(config-if-range)# switchport access vlan 3
+benbu(config)# interface range f0/10-12
+benbu(config-if-range)# switchport mode access
+benbu(config-if-range)# switchport access vlan 4
+</code></pre>
+    <p><strong>交换机（fenxiao）</strong></p>
+    <pre><code>fenxiao(config)# interface range f0/5-9
+fenxiao(config-if-range)# switchport mode access
+fenxiao(config-if-range)# switchport access vlan 3
+fenxiao(config)# interface range f0/10-12
+fenxiao(config-if-range)# switchport mode access
+fenxiao(config-if-range)# switchport access vlan 4
+</code></pre>
+    <p>6．将交换机benbu的F0/24端口设置为trunk端口，将交换机fenxiao的F0/24端口设置为trunk端口。</p>
+    <p><strong>交换机（fenxiao）</strong></p>
+    <pre><code>fenxiao(config)# int f0/24
+fenxiao(config-if)# switchport mode trunk
+</code></pre>
+    <p><strong>交换机（benbu）</strong></p>
+    <pre><code>benbu(config)# int f0/24
+benbu(config-if)# switchport mode trunk
+</code></pre>
+    <p>7．查看VTP 信息。</p>
+    <p><strong>交换机（fenxiao）</strong></p>
+    <pre><code>fenxiao# show vtp status
+</code></pre>
+    <p><strong>交换机（benbu）</strong></p>
+    <pre><code>benbu# show vtp status
+</code></pre>
+    <p>8．测试连通性。</p>
+    <p>①配置PC机的IP地址和子网掩码</p>
+    <p>PC1的IP地址：192.168.2.1，子网掩码：255.255.255.0；</p>
+    <p>PC2的IP地址：192.168.2.2，子网掩码：255.255.255.0；</p>
+    <p>PC3的IP地址：192.168.2.3，子网掩码：255.255.255.0。</p>
+    <p>②测试计算机的连通性</p>
+    <p><strong>PC1</strong></p>
+    <pre><code>PC&gt; ping 192.168.2.3
+PC&gt; ping 192.168.2.2
+</code></pre>
+    <p>结论：PC1 可以ping通 PC3，PC1 不可以ping通 PC2。</p>
+</body>
+
+</html>

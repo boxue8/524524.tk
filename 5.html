@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width initial-scale=1'>
+    <title>5</title>
+    <style type="text/css">
+        code{
+            font-size: 17px;
+        }
+        a{
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="index.html">返回</a>
+    <p><strong>实训任务5：添加静态路由</strong></p>
+    <p><img src="5.jpg" referrerpolicy="no-referrer" alt="5"> </p>
+    <p>1）完成各PC机和路由器的基本配置：</p>
+    <figure>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th style='text-align:center;'> 设备名称 </th>
+                    <th style='text-align:center;'> IP 地址 </th>
+                    <th style='text-align:center;'> 子网掩码 </th>
+                    <th style='text-align:center;'> 默认网关 </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style='text-align:center;'> PC0 </td>
+                    <td style='text-align:center;'> 172.16.3.10 </td>
+                    <td style='text-align:center;'> 255.255.255.0 </td>
+                    <td style='text-align:center;'> 172.16.3.1 </td>
+                </tr>
+                <tr>
+                    <td style='text-align:center;'> PC1 </td>
+                    <td style='text-align:center;'> 172.16.1.10 </td>
+                    <td style='text-align:center;'> 255.255.255.0 </td>
+                    <td style='text-align:center;'> 172.16.1.1 </td>
+                </tr>
+                <tr>
+                    <td style='text-align:center;'> PC2</td>
+                    <td style='text-align:center;'> 192.168.2.10 </td>
+                    <td style='text-align:center;'> 255.255.255.0 </td>
+                    <td style='text-align:center;'> 192.168.2.1 </td>
+                </tr>
+            </tbody>
+        </table>
+    </figure>
+    <p><strong>路由器R1</strong></p>
+    <pre><code>Router(config)# host R1
+R1(config)# int f0/0
+R1(config-if)# ip add 172.16.3.1 255.255.255.0
+R1(config-if)# no shut
+R1(config)# int s2/0
+R1(config-if)# ip add 172.16.2.1 255.255.255.0
+R1(config-if)# clock rate 64000
+R1(config-if)# no shut
+</code></pre>
+    <p><strong>路由器R2</strong></p>
+    <pre><code>Router(config)# host R2
+R2(config)# int f0/0
+R2(config-if)# ip add 172.16.1.1 255.255.255.0
+R2(config-if)# no shut
+R2(config)# int s2/0
+R2(config-if)# ip add 172.16.2.2 255.255.255.0
+R2(config-if)# no shut
+R2(config)# int s3/0
+R2(config-if)# ip add 192.168.1.1  255.255.255.0
+R2(config-if)# clock rate 64000
+R2(config-if)# no shut
+</code></pre>
+    <p><strong>路由器R3</strong></p>
+    <pre><code>Router(config)# host R3
+R3(config)# int f0/0
+R3(config-if)# ip add 192.168.2.1 255.255.255.0
+R3(config-if)# no shut
+R3(config)# int s3/0
+R3(config-if)# ip add 192.168.1.2 255.255.255.0
+R2(config-if)# no shut
+</code></pre>
+    <p>2）分别查看R1、 R2、R3的路由表。</p>
+    <p><strong>路由器R1</strong></p>
+    <pre><code>R1# show ip route
+</code></pre>
+    <p><strong>路由器R2</strong></p>
+    <pre><code>R2# show ip route
+</code></pre>
+    <p><strong>路由器R3</strong></p>
+    <pre><code>R3# show ip route
+</code></pre>
+    <p>3）测试各PC机的连通性。</p>
+    <p><strong>PCO</strong></p>
+    <pre><code>PC&gt; ping 172.16.1.10
+PC&gt; ping 192.168.2.10
+</code></pre>
+    <p>结论：PC0、PC1、PC2互不通。</p>
+    <p>4）分别用不同的方法在R1、R2、R3上配置静态路由（包括默认路由），实现各PC机之间相互能ping通的目标，并查看此时各路由器上的路由表。</p>
+    <p><strong>路由器R1</strong></p>
+    <pre><code>R1(config)# ip route 0.0.0.0 0.0.0.0 172.16.2.2
+R1# show ip route 
+</code></pre>
+    <p><strong>路由器R2</strong></p>
+    <pre><code>R2(config)# ip route 172.16.3.0 255.255.255.0 172.16.2.1
+R2(config)# ip route 192.168.2.0 255.255.255.0 192.168.1.2
+R2# show ip route
+</code></pre>
+    <p><strong>路由器R3</strong></p>
+    <pre><code>R3(config)# ip route 0.0.0.0 0.0.0.0 192.168.1.1
+R3# show ip route
+</code></pre>
+    <p><strong>PC0</strong></p>
+    <pre><code>PC&gt; ping 172.16.1.10
+PC&gt; ping 192.168.2.10
+</code></pre>
+    <p>结论：PC0、PC1、PC2互相连通。</p>
+    <p> </p>
+</body>
+
+</html>

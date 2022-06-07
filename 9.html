@@ -1,0 +1,145 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width initial-scale=1'>
+    <title>9</title>
+    <style type="text/css">
+        code{
+            font-size: 17px;
+        }
+        a{
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="index.html">返回</a>
+    <p><strong>实训任务9：转换网络间地址</strong></p>
+    <p><img src="9.png" referrerpolicy="no-referrer" alt="9"></p>
+    <p>某公司拥有一台两接口路由器Router0（如图所示），其中一个接口是Ethernet口f0/0，另一个是串行接口s2/0。Ethernet口连接到内部网络，而串行接口则通过PPP链路连接到ISP路由器Router1。在内部网络中，公司使用10.0.0.0/24地址范围内的地址。公司希望使用NAPT将其所有的内部本地地址转换成从其供应商那里获得的内部全局地址171.100.1.2/29，并通过内部全局地址171.100.1.3/29提供可以从Internet访问的FTP和Web服务，并且对Web服务的请求应被送到Web服务器所在的地址10.1.1.2/24，而FTP请求则被送到FTP服务器所在的地址10.1.2.2/24。为方便验证配置结果，在ISP路由器Router1处提供有PC2（172.16.1.2/24）。
+    </p>
+    <figure>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th style='text-align:center;'>设备</th>
+                    <th style='text-align:center;'>IP地址</th>
+                    <th style='text-align:center;'>子网掩码</th>
+                    <th style='text-align:center;'>网关</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style='text-align:center;'>服务器www</td>
+                    <td style='text-align:center;'>10.1.1.2</td>
+                    <td style='text-align:center;'>255.255.255.0</td>
+                    <td style='text-align:center;'>10.1.1.254</td>
+                </tr>
+                <tr>
+                    <td style='text-align:center;'>服务器ftp</td>
+                    <td style='text-align:center;'>10.1.2.2</td>
+                    <td style='text-align:center;'>255.255.255.0</td>
+                    <td style='text-align:center;'>10.1.2.254</td>
+                </tr>
+                <tr>
+                    <td style='text-align:center;'>PC0</td>
+                    <td style='text-align:center;'>10.0.0.2</td>
+                    <td style='text-align:center;'>255.255.255.0</td>
+                    <td style='text-align:center;'>10.0.0.254</td>
+                </tr>
+                <tr>
+                    <td style='text-align:center;'>PC1</td>
+                    <td style='text-align:center;'>10.0.0.3</td>
+                    <td style='text-align:center;'>255.255.255.0</td>
+                    <td style='text-align:center;'>10.0.0.254</td>
+                </tr>
+                <tr>
+                    <td style='text-align:center;'>PC2</td>
+                    <td style='text-align:center;'>172.16.1.2</td>
+                    <td style='text-align:center;'>255.255.255.0</td>
+                    <td style='text-align:center;'>172.16.1.1</td>
+                </tr>
+            </tbody>
+        </table>
+    </figure>
+    <p><strong>交换机Switch0</strong></p>
+    <pre><code>Switch(config)# vlan 2
+Switch(config-vlan)# name WWW
+Switch(config)# vlan 3
+Switch(config-vlan)# name FTP
+Switch(config)# vlan 4
+Switch(config-vlan)# name user
+Switch(config)# vlan 5
+Switch(config-vlan)# name to-router
+Switch(config)# int f0/1
+Switch(config-if)# switchport access vlan 2
+Switch(config)# int f0/2
+Switch(config-if)# switchport access vlan 3
+Switch(config)# int f0/3
+Switch(config-if)# switchport access vlan 5
+Switch(config)# int f0/24
+Switch(config-if)# switchport access vlan 4
+Switch(config)# int vlan 2
+Switch(config-if)# ip address 10.1.1.254 255.255.255.0
+Switch(config)# int vlan 3
+Switch(config-if)# ip address 10.1.2.254 255.255.255.0
+Switch(config)# int vlan 4
+Switch(config-if)# ip address 10.0.0.254 255.255.255.0
+Switch(config)# int vlan 5
+Switch(config-if)# ip address 172.16.0.1 255.255.255.252
+Switch(config)# ip routing 
+Switch(config)# ip route 0.0.0.0 0.0.0.0 172.16.0.2 
+</code></pre>
+    <p><strong>路由器Router0</strong></p>
+    <pre><code>Router(config)# int f0/0
+Router(config-if)# ip address 172.16.0.2 255.255.255.252
+Router(config-if)# no sh
+Router(config)# int s2/0
+Router(config-if)# ip address 171.100.1.1 255.255.255.248
+Router(config-if)# no sh
+Router(config-if)# clock rate 64000
+Router(config)# ip route 0.0.0.0 0.0.0.0 171.100.1.6
+Router(config)# ip route 10.0.0.0 255.255.255.0 172.16.0.1 
+Router(config)# ip route 10.1.1.0 255.255.255.0 172.16.0.1 
+Router(config)# ip route 10.1.2.0 255.255.255.0 172.16.0.1 
+</code></pre>
+    <p><strong>路由器Router1</strong></p>
+    <pre><code>Router(config)# int f0/0
+Router(config-if)# ip address 172.16.1.1 255.255.255.0
+Router(config-if)# no sh
+Router(config)# int s2/0
+Router(config-if)# ip address 171.100.1.6 255.255.255.248
+Router(config-if)# no sh
+</code></pre>
+    <p><strong>路由器Router0</strong></p>
+    <pre><code>Router(config)# ip nat pool to-out 171.100.1.2 171.100.1.2 netmask 255.255.255.248
+Router(config)# access-list 1 permit 10.0.0.0 0.0.0.255
+Router(config)# ip nat inside source list 1 pool to-out overload 
+Router(config)# int f0/0
+Router(config-if)# ip nat inside
+Router(config)# int s2/0
+Router(config-if)# ip nat outside
+</code></pre>
+    <p><strong>PCO</strong></p>
+    <pre><code>PC&gt; 171.100.1.2
+</code></pre>
+    <p>结果：能ping通。</p>
+    <p><strong>路由器Router0</strong></p>
+    <pre><code>Router(config)# ip nat inside source static tcp 10.1.1.2 80 171.100.1.3 80
+Router(config)# ip nat inside source static tcp 10.1.2.2 21 171.100.1.3 21
+Router# show ip nat tra
+</code></pre>
+    <p><strong>PC2</strong></p>
+    <p>web游览器访问<strong>171.100.1.3</strong></p>
+    <p>结果：能访问。</p>
+    <pre><code>PC&gt; ftp 171.100.1.3
+Username: cisco
+Password: cisco
+</code></pre>
+    <p>结果：能访问。</p>
+</body>
+
+</html>

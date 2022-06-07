@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width initial-scale=1'>
+    <title>8</title>
+    <style type="text/css">
+        code{
+            font-size: 17px;
+        }
+        a{
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="index.html">返回</a>
+    <p><strong>实训任务8：控制子网间的访问</strong></p>
+    <p><img src="8.jpg" referrerpolicy="no-referrer" alt="8"></p>
+    <p>分别采用编号的访问控制列表和命名的访问控制列表完成下面的各项实训任务。</p>
+    <p>1、允许172.16.0.0/24网络访问192.168.100.0/24网段所有主机，但是只允许其访问192.168.0.0/24网段中的server0的www服务。</p>
+    <p>2、禁止172.16.1.0/24网段主机访问192.168.100.0/24网络，只禁止172.16.1.0/24网段主机访问192.168.0.0/24网段中的server0的FTP服务。</p>
+    <p><strong>参考答案：</strong></p>
+    <p>PC0的IP地址：172.16.0.2 ，子网掩码：255.255.255.0，网关：172.16.0.1</p>
+    <p>PC1的IP地址：172.16.1.2 ，子网掩码：255.255.255.0，网关：172.16.1.1</p>
+    <p>PC2的IP地址：192.168.0.3 ，子网掩码：255.255.255.0，网关：192.168.0.1</p>
+    <p>Server0的IP地址：192.168.0.2，子网掩码：255.255.255.0，网关：192.168.0.1</p>
+    <p>Laptop0的IP地址：192.168.100.2，子网掩码：255.255.255.0，网关：192.168.100.1</p>
+    <p><strong>路由器Router0</strong></p>
+    <pre><code>Router(config)# int f1/0
+Router(config-if)# ip add 172.16.0.1 255.255.255.0
+Router(config-if)# no shut
+Router(config-if)# int f0/0
+Router(config-if)# ip add 172.16.1.1 255.255.255.0
+Router(config-if)# no shut
+Router(config-if)# int f4/0
+Router(config-if)# ip add 202.102.1.1 255.255.255.252
+Router(config-if)# no shut
+Router(config)# route rip
+Router(config-router)# version 2
+Router(config-router)# network 172.16.0.0
+Router(config-router)# network 202.102.1.0
+</code></pre>
+    <p><strong>路由器Router1</strong></p>
+    <pre><code>Router(config)# int f4/0
+Router(config-if)# ip add 202.102.1.2 255.255.255.252
+Router(config-if)# no shut
+Router(config-if)# int f1/0
+Router(config-if)# ip add 192.168.0.1 255.255.255.0
+Router(config-if)# no shut
+Router(config-if)# int f0/0
+Router(config-if)# ip add 192.168.100.1 255.255.255.0
+Router(config-if)# no shut
+Router(config)# route rip
+Router(config-router)# version 2
+Router(config-router)# network 192.168.0.0
+Router(config-router)# network 192.168.100.0
+Router(config-router)# network 202.102.1.0
+</code></pre>
+    <p><strong>PC0</strong></p>
+    <pre><code>PC&gt; ping 192.168.0.3
+PC&gt; ping 192.168.0.2
+PC&gt; ping 192.168.100.2
+PC&gt; ftp 192.168.0.2
+</code></pre>
+    <p>web游览器访问192.168.0.2</p>
+    <p><strong>PC1</strong></p>
+    <pre><code>PC&gt; ping 192.168.0.3
+PC&gt; ping 192.168.0.2
+PC&gt; ping 192.168.100.2
+PC&gt; ftp 192.168.0.2
+</code></pre>
+    <p>web游览器访问192.168.0.2</p>
+    <p>结果：都能ping通，都可以访问Server0的WWW、FTP服务。</p>
+    <p><strong>注：</strong>以下为两种方式都要做，并分别测试访问控制效果。</p>
+    <p><strong>一、编号的ACL</strong></p>
+    <p><strong>路由器Router0</strong></p>
+    <pre><code>Router(config)# access-list 100 permit ip 172.16.0.0 0.0.0.255 192.168.100.0 0.0.0.255
+Router(config)# access-list 100 permit tcp 172.16.0.0 0.0.0.255 host 192.168.0.2 eq www
+Router(config)# access-list 100 deny ip 172.16.1.0 0.0.0.255 192.168.100.0 0.0.0.255
+Router(config)# access-list 100 deny tcp 172.16.1.0 0.0.0.255 host 192.168.0.2 eq 21
+Router(config)# access-list 100 permit ip 172.16.1.0 0.0.0.255 any
+Router(config)# int f4/0
+Router(config-if)# ip access-group 100 out
+Router# show ip access-lists 
+Router# show ip int f4/0
+</code></pre>
+    <p><strong>二、命名的ACL</strong></p>
+    <p><strong>路由器Router0</strong></p>
+    <pre><code>Router(config)# ip access-list extended NetControl
+Router(config-ext-nacl)# permit ip 172.16.0.0 0.0.0.255 192.168.100.0 0.0.0.255
+Router(config-ext-nacl)# permit tcp 172.16.0.0 0.0.0.255 host 192.168.0.2 eq www
+Router(config-ext-nacl)# deny ip 172.16.1.0 0.0.0.255 192.168.100.0 0.0.0.255
+Router(config-ext-nacl)# deny tcp 172.16.1.0 0.0.0.255 host 192.168.0.2 eq 21
+Router(config-ext-nacl)# permit ip 172.16.1.0 0.0.0.255 any 
+Router(config)# int f4/0
+Router(config-if)# ip access-group NetControl out
+</code></pre>
+    <p><strong>测试访问控制效果：</strong></p>
+    <p><strong>PC0</strong></p>
+    <pre><code>PC&gt; ping 192.168.100.2
+</code></pre>
+    <p>结果：能ping通。</p>
+    <p><strong>PC0</strong></p>
+    <pre><code>PC&gt; ping 192.168.0.2
+PC&gt; ping 192.168.0.3
+</code></pre>
+    <p>结果：目标主机不可达。</p>
+    <p><strong>PC0</strong></p>
+    <p>web游览器访问192.168.0.2</p>
+    <p>结果：能访问 Server0的WWW服务。</p>
+    <p><strong>PC1</strong></p>
+    <pre><code>PC&gt; ping 192.168.100.2
+</code></pre>
+    <p>结果：目标主机不可达。</p>
+    <p><strong>PC1</strong></p>
+    <pre><code>PC&gt; ping 192.168.0.3
+PC&gt; ping 192.168.0.2
+</code></pre>
+    <p>结果：能ping通。</p>
+    <p><strong>PC1</strong></p>
+    <pre><code>PC&gt; ftp 192.168.0.2
+</code></pre>
+    <p>结果：拒绝连接。</p>
+</body>
+
+</html>

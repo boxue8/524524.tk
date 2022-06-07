@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width initial-scale=1'>
+    <title>3</title>
+    <style type="text/css">
+        code{
+            font-size: 17px;
+        }
+        a{
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="index.html">返回</a>
+    <p><strong>实训任务3：防止路由环路</strong></p>
+    <p><img src="3.jpg" referrerpolicy="no-referrer" alt="3-1"></p>
+    <p>1．根据上面的拓扑结构图搭建网络。</p>
+    <p>2．按下面描述配置PC机，并测试连通性。</p>
+    <p>PC1的IP地址：192.168.1.1，子网掩码：255.255.255.0；</p>
+    <p>PC2的IP地址：192.168.1.2，子网掩码：255.255.255.0；</p>
+    <p>3．配置两台交换机的主机名分别为SwitchA和SwitchB。</p>
+    <p><strong>交换机SwitchA</strong></p>
+    <pre><code>Switch(config)# hostname SwitchA
+</code></pre>
+    <p><strong>交换机SwitchB</strong></p>
+    <pre><code>Switch(config)# hostname SwitchB
+</code></pre>
+    <p>4．分别查看两台交换机的生成树状态。</p>
+    <p><strong>交换机SwitchA</strong></p>
+    <pre><code>switchA# show spanning-tree
+</code></pre>
+    <p><strong>交换机SwitchB</strong></p>
+    <pre><code>switchB# show spanning-tree
+</code></pre>
+    <p>5．修改非根交换机的优先级为4096，使其成为根交换机，观察此时交换机端口颜色变化，并等稳定后再次查看两台交换机的生成树状态，测试两台PC机的连通性。</p>
+    <p><strong>交换机SwitchA</strong></p>
+    <pre><code>switchA(config)# spanning-tree vlan 1 priority 4096
+switchA# show spanning-tree
+</code></pre>
+    <p>6．修改当前非根交换机的非根端口的优先级为32，观察此时交换机端口颜色变化，再次查看本交换机的生成树状态，并查看修改端口的状态，测试两台PC机的连通性。</p>
+    <p><strong>交换机SwitchB</strong></p>
+    <pre><code>switchB(config-if)# spanning-tree vlan 1 port-priority 32
+switchB# show spanning-tree
+switchB# show spanning-tree interface f0/2
+</code></pre>
+    <p>7．删除当前根端口连线，观察当前非根交换机的非根端口的状态变化，并测试两台PC机的连通性。</p>
+    <p>8．修改交换机的生成树类型为rapid-pvst，再次重复上面的操作。</p>
+    <p><strong>交换机SwitchA</strong></p>
+    <pre><code>switchA(config)# spanning-tree mode rapid-pvst
+</code></pre>
+    <p><strong>交换机SwitchB</strong></p>
+    <pre><code>switchB(config)# spanning-tree mode rapid-pvst
+</code></pre>
+    <p>&nbsp;</p>
+</body>
+
+</html>
