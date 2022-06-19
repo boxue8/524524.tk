@@ -16,7 +16,7 @@
 </head>
 
 <body>
-<a href="index.html">返回</a>
+    <a href="index.html">返回</a>
     <p><strong>实训任务2-1：实现Vlan间通信(1)</strong></p>
     <p>PC1（192.168.2.1）和PC3（192.168.2.3）在VLAN1，PC2（192.168.2.2）在VLAN2。要求PC1不能与PC2互相通信，PC1能与PC3通信。</p>
     <p> <img src="2-1.jpg" referrerpolicy="no-referrer" alt="2-1"></p>
@@ -69,7 +69,10 @@ benbu(config-if-range)# switchport mode access
 benbu(config-if-range)# switchport access vlan 4
 </code></pre>
     <p><strong>交换机（fenxiao）</strong></p>
-    <pre><code>fenxiao(config)# interface range f0/5-9
+    <pre><code>fenxiao(config)# interface range f0/2-4
+fenxiao(config-if-range)# switchport mode access
+fenxiao(config-if-range)# switchport access vlan 2
+fenxiao(config)# interface range f0/5-9
 fenxiao(config-if-range)# switchport mode access
 fenxiao(config-if-range)# switchport access vlan 3
 fenxiao(config)# interface range f0/10-12
