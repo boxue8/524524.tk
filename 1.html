@@ -1,8 +1,10 @@
 <!doctype html>
 <html>
+
 <head>
-<meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'>
-<title>1</title>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width initial-scale=1'>
+    <title>1</title>
     <style type="text/css">
         code{
             font-size: 17px;
@@ -12,70 +14,73 @@
         }
     </style>
 </head>
+
 <body>
-<a href="index.html">返回</a>
-<p><strong>实训任务1：登录与管理交换机</strong></p>
-<p><img src="1.png" referrerpolicy="no-referrer" alt="1"></p>
-<p>1．按下面地址对PC0设置。</p>
-<p>IP地址：192.168.1.2</p>
-<p>子网掩码：255.255.255.0</p>
-<p>2．配置交换机主机名(switchA) 、加密使能密码（S1）、虚拟终端口令（S2）。</p>
-<p><strong>交换机：</strong></p>
-<pre><code>Switch&gt; enable
+    <a href="index.html">返回</a>
+    <p><strong>实训任务1：登录与管理交换机</strong></p>
+    <p><img src="1.png" referrerpolicy="no-referrer" alt="1"></p>
+    <p>1．按下面地址对PC0设置。</p>
+    <p>IP地址：192.168.1.2</p>
+    <p>子网掩码：255.255.255.0</p>
+    <p>2．配置交换机主机名(switchA) 、加密使能密码（S1）、虚拟终端口令（S2）。</p>
+    <p><strong>交换机：</strong></p>
+    <pre><code>Switch&gt; enable
 Switch# conf t
 Switch(config)# hostname switchA
 switchA(config)# enable secret S1
 switchA(config)# line vty 0 4
 switchA(config-line)# password S2
 </code></pre>
-<p>3．配置交换机管理IP地址（192.168.1.1）、子网掩码（255.255.255.0）。</p>
-<p><strong>交换机：</strong></p>
-<pre><code>SwitchA(config)# interface vlan 1
+    <p>3．配置交换机管理IP地址（192.168.1.1）、子网掩码（255.255.255.0）。</p>
+    <p><strong>交换机：</strong></p>
+    <pre><code>SwitchA(config)# interface vlan 1
 SwitchA(config-if)# ip address 192.168.1.1 255.255.255.0
 </code></pre>
-<p>4．查看VLAN 1虚接口的状态信息；并测试与PC0的连通性。</p>
-<p><strong>交换机：</strong></p>
-<pre><code>SwitchA# show interface vlan 1
+    <p>4．查看VLAN 1虚接口的状态信息；并测试与PC0的连通性。</p>
+    <p><strong>交换机：</strong></p>
+    <pre><code>SwitchA# show interface vlan 1
 </code></pre>
-<p><strong>PCO：</strong></p>
-<pre><code>PC&gt; Ping 192.168.1.1
+    <p><strong>PCO：</strong></p>
+    <pre><code>PC&gt; Ping 192.168.1.1
 </code></pre>
-<p><strong>注：</strong>此时PC0不可以 ping通SwitchA</p>
-<p>5．启用VLAN 1虚接口；再查看VLAN 1虚接口的状态信息，并测试与PC0的连通性。</p>
-<p><strong>交换机：</strong></p>
-<pre><code>SwitchA(config-if)# no shutdown
+    <p><strong>注：</strong>此时PC0不可以 ping通SwitchA</p>
+    <p>5．启用VLAN 1虚接口；再查看VLAN 1虚接口的状态信息，并测试与PC0的连通性。</p>
+    <p><strong>交换机：</strong></p>
+    <pre><code>SwitchA(config)# interface vlan 1
+SwitchA(config-if)# no shutdown
 SwitchA# show interface vlan 1
 </code></pre>
-<p><strong>PC0</strong>：</p>
-<pre><code>PC&gt; Ping 192.168.1.1
+    <p><strong>PC0</strong>：</p>
+    <pre><code>PC&gt; Ping 192.168.1.1
 </code></pre>
-<p><strong>注：</strong>此时PC0可以 ping通SwitchA</p>
-<p>6．通过Telnet方式登录到交换机并且保存配置文件。</p>
-<p><strong>PCO：</strong></p>
-<pre><code>PC&gt; telnet 192.168.1.1
+    <p><strong>注：</strong>此时PC0可以 ping通SwitchA</p>
+    <p>6．通过Telnet方式登录到交换机并且保存配置文件。</p>
+    <p><strong>PCO：</strong></p>
+    <pre><code>PC&gt; telnet 192.168.1.1
 password: S2 
 Switch&gt; enable
 password: S1
 SwitchA# write
 </code></pre>
-<p>7．配置交换机端口f0/1，端口速度（100Mbit/s）、端口双工方式（半双工）。</p>
-<p><strong>交换机：</strong></p>
-<pre><code>SwitchA(config)# interface f 0/1
+    <p>7．配置交换机端口f0/1，端口速度（100Mbit/s）、端口双工方式（半双工）。</p>
+    <p><strong>交换机：</strong></p>
+    <pre><code>SwitchA(config)# interface f 0/1
 SwitchA(config-if)# speed 100
 SwitchA(config-if)# duplex half
 </code></pre>
-<p>8．查看交换机版本信息。</p>
-<p><strong>交换机：</strong></p>
-<pre><code>SwitchA# show version
+    <p>8．查看交换机版本信息。</p>
+    <p><strong>交换机：</strong></p>
+    <pre><code>SwitchA# show version
 </code></pre>
-<p>9．查看当前生效的配置信息。</p>
-<p><strong>交换机：</strong></p>
-<pre><code>SwitchA# show running-config
+    <p>9．查看当前生效的配置信息。</p>
+    <p><strong>交换机：</strong></p>
+    <pre><code>SwitchA# show running-config
 SwitchA# show startup-config
 </code></pre>
-<p>10．查看交换机的MAC地址表的内容。</p>
-<p><strong>交换机：</strong></p>
-<pre><code>SwitchA# Show mac-address-table
+    <p>10．查看交换机的MAC地址表的内容。</p>
+    <p><strong>交换机：</strong></p>
+    <pre><code>SwitchA# Show mac-address-table
 </code></pre>
 </body>
+
 </html>
